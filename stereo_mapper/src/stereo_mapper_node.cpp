@@ -5,8 +5,8 @@
 #include <ros/ros.h>
 
 #include <opencv2/opencv.hpp>
-#include <opencv2/gpu/gpu.hpp>
-#include <opencv2/contrib/contrib.hpp>
+#include <opencv2/cudalegacy.hpp>
+// #include <opencv2/contrib/contrib.hpp>
 
 #include <tf/transform_broadcaster.h>
 #include <message_filters/subscriber.h>
@@ -494,7 +494,7 @@ cv::Mat showColorDep(const cv::Mat &result)
 //    }
 //}
 
-cv::StereoBM bm(cv::StereoBM::BASIC_PRESET, 128, 21);
+auto bm = cv::StereoBM::create(128, 21);
 
 cv::Mat blockMatching(const std::string name, const cv::Mat &img_l, const cv::Mat &img_r)
 {
@@ -514,7 +514,7 @@ cv::Mat blockMatching(const std::string name, const cv::Mat &img_l, const cv::Ma
 
     cv::Mat disp_16, disp;
     cv::Mat_<cv::Vec3f> dense_points_;
-    bm(img_ll, img_rr, disp_16);
+    bm->compute(img_ll, img_rr, disp_16);
     disp_16.convertTo(disp, CV_32F, 1.0f / 16);
     cv::reprojectImageTo3D(disp, dense_points_, Q, true);
     sendCloud2(dense_points_, img_ll);

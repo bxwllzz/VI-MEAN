@@ -21,10 +21,15 @@ generate_dynamic_reconfigure_options(
     cfg/debug.cfg
     )
 
+include_directories(${catkin_INCLUDE_DIRS})
+
 find_package(Eigen3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
 
-find_package(OpenCV REQUIRED)
+find_package(OpenCV 3.0 REQUIRED
+        PATHS /usr/local
+        NO_DEFAULT_PATH)
+include_directories(${OpenCV_INCLUDE_DIRS})
 
 find_package(CUDA REQUIRED)
 
@@ -32,7 +37,7 @@ set(CUDA_NVCC_FLAGS
     ${CUDA_NVCC_FLAGS};
     #    -std=c++11 -O3 -gencode arch=compute_30,code=sm_30  # T440s
     #    -std=c++11 -O3 -gencode arch=compute_53,code=sm_53  # tx1
-    -std=c++11 -O3 -gencode arch=compute_61,code=sm_61  # gtx 980 Ti / 1080
+    -O3 -gencode arch=compute_61,code=sm_61  # gtx 980 Ti / 1080
     )
 
 catkin_package()
